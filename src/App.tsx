@@ -55,10 +55,11 @@ function App() {
     3: cloneMatrix(EXAMPLES[3].features),
   }));
   const [featureInputError, setFeatureInputError] = useState("");
-  const [controlsCollapsed, setControlsCollapsed] = useState(false);
   const [showTargetMatrix, setShowTargetMatrix] = useState(true);
   const [showApproximationMatrix, setShowApproximationMatrix] = useState(true);
   const [showResidualMatrix, setShowResidualMatrix] = useState(true);
+  const [showControlsPanel, setShowControlsPanel] = useState(true);
+  const [showInfoPanel, setShowInfoPanel] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [viewRevision, setViewRevision] = useState(0);
@@ -89,7 +90,8 @@ function App() {
   const animationDelay = 1450 - speed * 125;
   const workspaceClassName = [
     "workspace",
-    controlsCollapsed ? "controls-collapsed" : "controls-expanded",
+    showControlsPanel ? "controls-visible" : "controls-hidden",
+    showInfoPanel ? "info-visible" : "info-hidden",
   ].join(" ");
 
   useEffect(() => {
@@ -141,8 +143,8 @@ function App() {
   }, [isFullscreen]);
 
   useEffect(() => {
-    // Plotly listens to window resizes, but the control panel only changes the grid.
-    // Nudge it after the transition so the plot cannot keep an obsolete wider size.
+    // Plotly listens to window resizes, but panel checkboxes only change the grid.
+    // Nudge it after the layout settles so the plot cannot keep an obsolete size.
     const animationFrame = window.requestAnimationFrame(() => {
       window.dispatchEvent(new Event("resize"));
     });
@@ -154,7 +156,7 @@ function App() {
       window.cancelAnimationFrame(animationFrame);
       window.clearTimeout(transitionTimer);
     };
-  }, [controlsCollapsed]);
+  }, [showControlsPanel, showInfoPanel]);
 
   const plotState = useMemo(() => {
     const options: TraceOptions = {
@@ -377,19 +379,8 @@ function App() {
       </header>
 
       <section className={workspaceClassName}>
-        <div
-          className={`control-shell ${controlsCollapsed ? "is-collapsed" : ""}`}
-        >
-          <aside className="control-panel" aria-hidden={controlsCollapsed}>
-            <button
-              type="button"
-              className="control-panel-toggle"
-              onClick={() => setControlsCollapsed(true)}
-              aria-label="Collapse controls"
-            >
-              {"<<"}
-            </button>
-
+        {showControlsPanel && (
+          <aside className="control-panel">
             <div className="panel-block">
               <label>
                 Dimension
@@ -475,7 +466,9 @@ function App() {
                 <button
                   type="button"
                   onClick={() => advanceOneStep(true)}
-                  disabled={eligible.length === 0 && historyIndex >= history.length - 1}
+                  disabled={
+                    eligible.length === 0 && historyIndex >= history.length - 1
+                  }
                 >
                   Next pivot
                 </button>
@@ -580,16 +573,7 @@ function App() {
               </div>
             </div>
           </aside>
-
-          <button
-            type="button"
-            className="control-reopen-button"
-            onClick={() => setControlsCollapsed(false)}
-            aria-label="Expand controls"
-          >
-            {">>"}
-          </button>
-        </div>
+        )}
 
         <section className="visual-panel">
           <div className="visual-toolbar">
@@ -607,13 +591,35 @@ function App() {
               <button
                 type="button"
                 onClick={() => advanceOneStep(true)}
-                disabled={eligible.length === 0 && historyIndex >= history.length - 1}
+                disabled={
+                  eligible.length === 0 && historyIndex >= history.length - 1
+                }
               >
                 Next pivot
               </button>
               <button type="button" onClick={resetView}>
                 Reset view
               </button>
+            </div>
+            <div className="toolbar-toggles" aria-label="Panel visibility">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={showControlsPanel}
+                  onChange={(event) =>
+                    setShowControlsPanel(event.target.checked)
+                  }
+                />
+                Controls
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={showInfoPanel}
+                  onChange={(event) => setShowInfoPanel(event.target.checked)}
+                />
+                Information
+              </label>
             </div>
           </div>
 
@@ -632,25 +638,11 @@ function App() {
             <div className="pivot-overlay">
               <DisplayMath>{formatSubspaceLatex(currentState.pivots)}</DisplayMath>
             </div>
-            <div className="matrix-overlay-stack">
-              {matrixOverlays.map((overlay) => (
-                <article key={overlay.key} className="matrix-overlay-card">
-                  <h3>
-                    <InlineMath>{overlay.title}</InlineMath>
-                  </h3>
-                  <Plot
-                    data={overlay.state.data}
-                    layout={overlay.state.layout}
-                    config={{ displaylogo: false, responsive: true }}
-                    useResizeHandler
-                    className="matrix-overlay-plot"
-                  />
-                </article>
-              ))}
-            </div>
+            <MatrixOverlayStack overlays={matrixOverlays} />
           </div>
         </section>
 
+        {showInfoPanel && (
         <aside className="readout-panel readout-detail-panel">
             <details className="panel-block collapsible-block formula-panel" open>
               <summary className="section-summary">
@@ -785,6 +777,7 @@ function App() {
             </details>
 
           </aside>
+        )}
       </section>
 
       {isFullscreen && (
@@ -829,7 +822,9 @@ function App() {
                 <button
                   type="button"
                   onClick={() => advanceOneStep(true)}
-                  disabled={eligible.length === 0 && historyIndex >= history.length - 1}
+                  disabled={
+                    eligible.length === 0 && historyIndex >= history.length - 1
+                  }
                 >
                   Next pivot
                 </button>
@@ -862,22 +857,7 @@ function App() {
               <div className="pivot-overlay">
                 <DisplayMath>{formatSubspaceLatex(currentState.pivots)}</DisplayMath>
               </div>
-              <div className="matrix-overlay-stack">
-                {matrixOverlays.map((overlay) => (
-                  <article key={overlay.key} className="matrix-overlay-card">
-                    <h3>
-                      <InlineMath>{overlay.title}</InlineMath>
-                    </h3>
-                    <Plot
-                      data={overlay.state.data}
-                      layout={overlay.state.layout}
-                      config={{ displaylogo: false, responsive: true }}
-                      useResizeHandler
-                      className="matrix-overlay-plot"
-                    />
-                  </article>
-                ))}
-              </div>
+              <MatrixOverlayStack overlays={matrixOverlays} />
             </div>
           </section>
         </div>
@@ -900,6 +880,40 @@ type MatrixOverlay = {
   title: string;
   state: { data: Data[]; layout: Partial<Layout> };
 };
+
+function MatrixOverlayStack({ overlays }: { overlays: MatrixOverlay[] }) {
+  if (overlays.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="matrix-overlay-stack">
+      {overlays.map((overlay) => (
+        <article key={overlay.key} className="matrix-overlay-card">
+          <h3>
+            <InlineMath>{overlay.title}</InlineMath>
+          </h3>
+          <Plot
+            data={overlay.state.data}
+            layout={overlay.state.layout}
+            config={{ displaylogo: false, responsive: true }}
+            useResizeHandler
+            className="matrix-overlay-plot"
+          />
+        </article>
+      ))}
+      <div className="matrix-color-legend" aria-label="Matrix color legend">
+        <div className="matrix-color-bar" aria-hidden="true" />
+        <div className="matrix-color-labels">
+          <span>negative</span>
+          <span>0</span>
+          <span>positive</span>
+        </div>
+        <p>Fixed scale for all shown matrix entries.</p>
+      </div>
+    </div>
+  );
+}
 
 function create2DTraces(options: TraceOptions): Data[] {
   const traces: Data[] = [

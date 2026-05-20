@@ -142,16 +142,23 @@ h3 {
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(265px, 310px) minmax(620px, 1fr) minmax(300px, 365px);
+  grid-template-columns: minmax(250px, 285px) minmax(560px, 1fr) minmax(260px, 305px);
   gap: 1rem;
-  align-items: stretch;
-  width: min(100%, 1840px);
+  align-items: start;
+  width: min(100%, 1800px);
   margin: 0 auto;
-  transition: grid-template-columns 220ms ease;
 }
 
-.workspace.controls-collapsed {
-  grid-template-columns: 46px minmax(620px, 1fr) minmax(300px, 365px);
+.workspace.controls-hidden.info-visible {
+  grid-template-columns: minmax(560px, 1fr) minmax(260px, 305px);
+}
+
+.workspace.controls-visible.info-hidden {
+  grid-template-columns: minmax(250px, 285px) minmax(560px, 1fr);
+}
+
+.workspace.controls-hidden.info-hidden {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .control-panel,
@@ -167,89 +174,15 @@ h3 {
 .readout-panel {
   display: grid;
   gap: 0;
-  min-height: clamp(680px, calc(100vh - 7.5rem), 920px);
-  height: 100%;
   align-content: start;
   overflow: hidden;
-}
-
-.control-shell {
-  position: relative;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.control-panel {
-  position: relative;
-  max-height: 1400px;
-  transition:
-    opacity 180ms ease,
-    transform 220ms ease,
-    max-height 220ms ease;
-}
-
-.control-shell.is-collapsed .control-panel {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(-1rem);
-}
-
-.control-panel > .panel-block:first-of-type {
-  padding-top: 3.45rem;
-}
-
-.control-panel-toggle,
-.control-reopen-button {
-  display: grid;
-  place-items: center;
-  width: 2.15rem;
-  height: 2.15rem;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: #6b7280;
-  padding: 0;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.control-panel-toggle:hover:not(:disabled),
-.control-reopen-button:hover:not(:disabled) {
-  background: transparent;
-  color: #374151;
-}
-
-.control-panel-toggle {
-  position: absolute;
-  top: 0.8rem;
-  right: 0.8rem;
-  z-index: 2;
-}
-
-.control-reopen-button {
-  position: absolute;
-  top: 0.8rem;
-  left: 0.15rem;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(-0.4rem);
-  transition:
-    opacity 160ms ease,
-    transform 220ms ease;
-}
-
-.control-shell.is-collapsed .control-reopen-button {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateX(0);
 }
 
 .visual-panel {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  align-self: start;
   min-width: 0;
-  height: clamp(560px, calc(100vh - 10rem), 760px);
+  min-height: clamp(640px, calc(100vh - 7.5rem), 900px);
   overflow: hidden;
   padding: 0.65rem;
 }
@@ -328,17 +261,31 @@ h3 {
 
 .visual-toolbar {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
   padding: 0.15rem 0.15rem 0.7rem;
 }
 
 .toolbar-actions,
+.toolbar-toggles,
 .fullscreen-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.55rem;
+}
+
+.toolbar-toggles label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.toolbar-toggles input {
+  margin: 0;
 }
 
 .plot-stage {
@@ -459,6 +406,35 @@ h3 {
   min-height: 108px;
 }
 
+.matrix-color-legend {
+  display: grid;
+  gap: 0.25rem;
+  border: 1px solid rgba(209, 213, 219, 0.92);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  padding: 0.42rem;
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.25;
+}
+
+.matrix-color-bar {
+  height: 0.48rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1d4ed8, #f8fafc 50%, #b91c1c);
+  box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.1);
+}
+
+.matrix-color-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.25rem;
+}
+
+.matrix-color-legend p {
+  margin: 0;
+}
+
 dl {
   display: grid;
   gap: 0.75rem;
@@ -532,13 +508,15 @@ dd {
 
 @media (max-width: 1240px) {
   .workspace,
-  .workspace.controls-collapsed {
+  .workspace.controls-hidden.info-visible,
+  .workspace.controls-visible.info-hidden,
+  .workspace.controls-hidden.info-hidden {
     grid-template-columns: 1fr;
   }
 
   .visual-panel {
     order: -1;
-    height: clamp(520px, 72vh, 700px);
+    min-height: clamp(520px, 72vh, 700px);
   }
 
   .plot {
@@ -548,23 +526,6 @@ dd {
   .control-panel,
   .readout-panel {
     min-height: 0;
-  }
-
-  .control-shell.is-collapsed {
-    min-height: 2.45rem;
-  }
-
-  .control-shell.is-collapsed .control-panel {
-    max-height: 0;
-    min-height: 0;
-    border-width: 0;
-    box-shadow: none;
-    transform: translateY(-1rem);
-  }
-
-  .control-reopen-button {
-    top: 0;
-    left: 0;
   }
 
   .pivot-overlay {
