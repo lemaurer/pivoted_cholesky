@@ -1,0 +1,618 @@
+:root {
+  color: #111827;
+  background: #ffffff;
+  font-family:
+    "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --ink: #111827;
+  --muted: #4b5563;
+  --line: #d1d5db;
+  --soft: #f8fafc;
+  --accent: #2448a6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    linear-gradient(180deg, rgba(36, 72, 166, 0.06), transparent 180px),
+    #ffffff;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--ink);
+  padding: 0.62rem 0.9rem;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    color 120ms ease,
+    opacity 120ms ease;
+}
+
+button:hover:not(:disabled) {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+select,
+input[type="text"],
+textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--ink);
+  padding: 0.62rem 0.72rem;
+}
+
+textarea {
+  min-height: 8.3rem;
+  resize: vertical;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+label {
+  display: grid;
+  gap: 0.42rem;
+  color: var(--muted);
+  font-size: 0.93rem;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  color: var(--ink);
+  font-size: clamp(1.8rem, 3vw, 2.55rem);
+  line-height: 1;
+}
+
+h2 {
+  margin-bottom: 0.8rem;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.98rem;
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  width: min(100%, 1840px);
+  margin: 0 auto 1.25rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.25rem;
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hero-copy {
+  max-width: 520px;
+  margin-bottom: 0.1rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(265px, 310px) minmax(620px, 1fr) minmax(300px, 365px);
+  gap: 1rem;
+  align-items: stretch;
+  width: min(100%, 1840px);
+  margin: 0 auto;
+  transition: grid-template-columns 220ms ease;
+}
+
+.workspace.controls-collapsed {
+  grid-template-columns: 46px minmax(620px, 1fr) minmax(300px, 365px);
+}
+
+.control-panel,
+.readout-panel,
+.visual-panel {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+}
+
+.control-panel,
+.readout-panel {
+  display: grid;
+  gap: 0;
+  min-height: clamp(680px, calc(100vh - 7.5rem), 920px);
+  height: 100%;
+  align-content: start;
+  overflow: hidden;
+}
+
+.control-shell {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.control-panel {
+  position: relative;
+  max-height: 1400px;
+  transition:
+    opacity 180ms ease,
+    transform 220ms ease,
+    max-height 220ms ease;
+}
+
+.control-shell.is-collapsed .control-panel {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-1rem);
+}
+
+.control-panel > .panel-block:first-of-type {
+  padding-top: 3.45rem;
+}
+
+.control-panel-toggle,
+.control-reopen-button {
+  display: grid;
+  place-items: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #6b7280;
+  padding: 0;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.control-panel-toggle:hover:not(:disabled),
+.control-reopen-button:hover:not(:disabled) {
+  background: transparent;
+  color: #374151;
+}
+
+.control-panel-toggle {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 2;
+}
+
+.control-reopen-button {
+  position: absolute;
+  top: 0.8rem;
+  left: 0.15rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-0.4rem);
+  transition:
+    opacity 160ms ease,
+    transform 220ms ease;
+}
+
+.control-shell.is-collapsed .control-reopen-button {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.visual-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-self: start;
+  min-width: 0;
+  height: clamp(560px, calc(100vh - 10rem), 760px);
+  overflow: hidden;
+  padding: 0.65rem;
+}
+
+.panel-block {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-block:last-child {
+  border-bottom: 0;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.button-row button,
+.compact-button-row button {
+  min-width: 0;
+}
+
+.button-row button:last-child {
+  grid-column: 1 / -1;
+}
+
+.range-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.range-line span {
+  min-width: 2.75rem;
+  color: var(--ink);
+  text-align: right;
+}
+
+.data-panel {
+  align-content: start;
+}
+
+.matrix-toggle-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.matrix-toggle-list label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ink);
+}
+
+.matrix-toggle-list input {
+  margin: 0;
+}
+
+.compact-button-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.input-error {
+  margin: -0.1rem 0 0;
+  color: #b91c1c;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.visual-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.15rem 0.15rem 0.7rem;
+}
+
+.toolbar-actions,
+.fullscreen-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.plot-stage {
+  position: relative;
+  min-height: 0;
+}
+
+.plot {
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+}
+
+.formula-entry {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--muted);
+}
+
+.formula-panel .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 0.15rem 0 0;
+  border-radius: 12px;
+  background: var(--soft);
+  color: var(--ink);
+  padding: 0.72rem;
+}
+
+.collapsible-block {
+  display: block;
+}
+
+.section-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 700;
+}
+
+.section-summary::-webkit-details-marker {
+  display: none;
+}
+
+.section-summary::marker {
+  content: "";
+}
+
+.section-chevron {
+  width: 0.58rem;
+  height: 0.58rem;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg) translateY(-0.12rem);
+  transition: transform 140ms ease;
+}
+
+.collapsible-block[open] .section-chevron {
+  transform: rotate(225deg) translateY(-0.12rem);
+}
+
+.section-content {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 0.9rem;
+}
+
+.pivot-overlay {
+  position: absolute;
+  bottom: 4.25rem;
+  left: 3.8rem;
+  z-index: 2;
+  border: 1px solid rgba(209, 213, 219, 0.92);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.35rem 0.75rem;
+  pointer-events: none;
+}
+
+.pivot-overlay .katex-display {
+  margin: 0;
+  color: var(--ink);
+}
+
+.matrix-overlay-stack {
+  position: absolute;
+  top: 4.6rem;
+  right: 1rem;
+  z-index: 2;
+  display: grid;
+  gap: 0.55rem;
+  width: clamp(126px, 12vw, 154px);
+}
+
+.matrix-overlay-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0.18rem;
+  min-height: 132px;
+  border: 1px solid rgba(209, 213, 219, 0.92);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.35rem;
+}
+
+.matrix-overlay-card h3 {
+  text-align: center;
+  font-size: 0.82rem;
+}
+
+.matrix-overlay-plot {
+  width: 100%;
+  height: 100%;
+  min-height: 108px;
+}
+
+dl {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+dl div {
+  display: grid;
+  gap: 0.16rem;
+}
+
+dt {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+dd {
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.value-list {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.projected-list {
+  gap: 0.55rem;
+}
+
+.fullscreen-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.68);
+}
+
+.fullscreen-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+  overflow: hidden;
+}
+
+.fullscreen-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.fullscreen-plot-stage {
+  position: relative;
+  min-height: 0;
+  padding: 0.65rem;
+}
+
+.fullscreen-plot {
+  min-height: 0;
+}
+
+@media (max-width: 1240px) {
+  .workspace,
+  .workspace.controls-collapsed {
+    grid-template-columns: 1fr;
+  }
+
+  .visual-panel {
+    order: -1;
+    height: clamp(520px, 72vh, 700px);
+  }
+
+  .plot {
+    min-height: 440px;
+  }
+
+  .control-panel,
+  .readout-panel {
+    min-height: 0;
+  }
+
+  .control-shell.is-collapsed {
+    min-height: 2.45rem;
+  }
+
+  .control-shell.is-collapsed .control-panel {
+    max-height: 0;
+    min-height: 0;
+    border-width: 0;
+    box-shadow: none;
+    transform: translateY(-1rem);
+  }
+
+  .control-reopen-button {
+    top: 0;
+    left: 0;
+  }
+
+  .pivot-overlay {
+    bottom: 4rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 1rem;
+  }
+
+  .hero,
+  .visual-toolbar,
+  .fullscreen-toolbar {
+    display: grid;
+    align-items: start;
+    justify-items: start;
+  }
+
+  .button-row {
+    grid-template-columns: 1fr;
+  }
+
+  .button-row button:last-child {
+    grid-column: auto;
+  }
+
+  .pivot-overlay {
+    left: 1rem;
+    bottom: 4rem;
+  }
+
+  .matrix-overlay-stack {
+    top: 5.25rem;
+    right: 0.55rem;
+    width: 118px;
+  }
+
+  .matrix-overlay-card {
+    min-height: 122px;
+  }
+
+  .matrix-overlay-plot {
+    min-height: 98px;
+  }
+
+  .fullscreen-backdrop {
+    padding: 0.5rem;
+  }
+}
